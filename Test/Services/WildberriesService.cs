@@ -126,6 +126,7 @@ public class WildberriesService : IWildberriesService
             // Получаем базовые данные
             var orders = await GetOrdersAsync(DateTime.Now.AddDays(-30));
             var stocks = await GetStocksAsync(DateTime.Now.AddDays(-30));
+            var units = await GetUnitsAsync();
             
             // Группируем по артикулу
             var articleGroups = stocks
@@ -187,6 +188,16 @@ public class WildberriesService : IWildberriesService
                 
                 // Общие заказы
                 article.TotalOrders = article.FactOrdersFBW + article.FactOrdersFBS + article.FactOrdersDBS_DBW;
+                
+                // Находим соответствующий Unit и заполняем поля из него
+                var unit = units.FirstOrDefault(u => u.SupplierArticle == article.SupplierArticle);
+                if (unit != null)
+                {
+                    article.RedemptionPercent = unit.BuyoutPercent;
+                    // Литраж по отчету остатков и по характеристикам могут использоваться для различных расчетов
+                    article.OP_PerUnit_WithoutDRR = unit.LitrageByStocks;
+                    article.Margin_WithoutDRR = unit.LitrageByCharacteristics;
+                }
                 
                 // Остальные поля будут заполняться позже через API рекламы
                 
