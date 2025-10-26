@@ -1,0 +1,269 @@
+@page
+@model Test.Pages.ArticlesModel
+@{
+    ViewData["Title"] = "Артикулы";
+}
+
+<div style="width: 100%; padding: 15px 0;">
+    <h1 class="mb-4">Лист с артикулами</h1>
+
+    <!-- Фильтр загрузки -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-2 d-flex align-items-end">
+                    <input type="hidden" name="load" value="true" />
+                    <button type="submit" class="btn btn-primary">Загрузить данные</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Articles.Any())
+    {
+        <div class="card mb-4">
+            <div class="card-body" style="padding: 0;">
+                <div class="table-responsive" style="overflow-x: auto; width: 100%;">
+                    <table class="table table-bordered table-sm w-100" style="font-size: 0.65rem; margin: 0;">
+                        <thead>
+                            <tr style="background-color: #e9ecef;">
+                                <th>Артикул</th>
+                                <th>Факт общие заказы</th>
+                                <th>Факт Заказы FBW</th>
+                                <th>Факт Заказы FBS</th>
+                                <th>Факт Заказы DBS/DBW</th>
+                                <th>План Заказы</th>
+                                <th>Ф-П %</th>
+                                <th>Сумма Заказов</th>
+                                <th>Факт Выкуп</th>
+                                <th>Сумма Выкуп</th>
+                                <th>Кол-во Раздач</th>
+                                <th>Потеря Раздач</th>
+                                <th>Кол-во Блог</th>
+                                <th>Потеря Блог</th>
+                                <th>Кол-во СМВК</th>
+                                <th>Потеря СМВК</th>
+                                <th>Индекс остатка</th>
+                                <th>Оборач, дн</th>
+                                <th>Цена</th>
+                                <th>Скидка</th>
+                                <th>Цена без СПП</th>
+                                <th>СПП</th>
+                                <th>Цена с СПП</th>
+                                <th>% выкупа</th>
+                                <th>ОВ, шт</th>
+                                <th>ОВ, руб</th>
+                                <th>ДРР, руб</th>
+                                <th>ДРР ПРК, руб</th>
+                                <th>ДРР АРК, руб</th>
+                                <th>ДРР ЗКЗ, %</th>
+                                <th>ДРР ОВ, %</th>
+                                <th>ДРР ОП, %</th>
+                                <th>ОП ОВ без ДРР</th>
+                                <th>ОП ОВ с ДРР</th>
+                                <th>ДРР на 1 ед.</th>
+                                <th>ОП на 1 ед. с ДРР</th>
+                                <th>Марж с ДРР</th>
+                                <th>ROI с ДРР</th>
+                                <th>ОП на 1 ед. без ДРР</th>
+                                <th>Марж без ДРР</th>
+                                <th>ROI без ДРР</th>
+                                <th>Показы общ</th>
+                                <th>CTR общ</th>
+                                <th>Клики общ</th>
+                                <th>CR К-К общ</th>
+                                <th>Корзина общ</th>
+                                <th>Избранное</th>
+                                <th>CR К-З общ</th>
+                                <th>Заказ общ</th>
+                                <th>Показы орг</th>
+                                <th>CTR орг</th>
+                                <th>Клики орг</th>
+                                <th>CR К-К орг</th>
+                                <th>Корзина орг</th>
+                                <th>CR К-З орг</th>
+                                <th>Заказ орг</th>
+                                <th>Показы срзн</th>
+                                <th>CTR срзн</th>
+                                <th>Клики срзн</th>
+                                <th>CR К-К срзн</th>
+                                <th>Корзина срзн</th>
+                                <th>CR К-З срзн</th>
+                                <th>Заказ срзн</th>
+                                <th>ДРР общий</th>
+                                <th>CPC срзн</th>
+                                <th>CPL срзн</th>
+                                <th>CPO срзн</th>
+                                <th>CPM срзн</th>
+                                <th>ROMI РК</th>
+                                <th>Показы прк</th>
+                                <th>CTR прк</th>
+                                <th>Клики прк</th>
+                                <th>CR К-К прк</th>
+                                <th>Корзина прк</th>
+                                <th>CR К-З прк</th>
+                                <th>Заказ прк</th>
+                                <th>ДРР прк</th>
+                                <th>CPC прк</th>
+                                <th>CPL прк</th>
+                                <th>CPO прк</th>
+                                <th>CPM прк</th>
+                                <th>Показы арк</th>
+                                <th>CTR арк</th>
+                                <th>Клики арк</th>
+                                <th>CR К-К арк</th>
+                                <th>Корзина арк</th>
+                                <th>CR К-З арк</th>
+                                <th>Заказ арк</th>
+                                <th>ДРР арк</th>
+                                <th>CPC арк</th>
+                                <th>CPL арк</th>
+                                <th>CPO арк</th>
+                                <th>CPM арк</th>
+                                <th>FBW</th>
+                                <th>Электросталь</th>
+                                <th>Коледино</th>
+                                <th>Подольск</th>
+                                <th>Казань</th>
+                                <th>Тула</th>
+                                <th>Невинномысск</th>
+                                <th>Краснодар</th>
+                                <th>Остальные</th>
+                                <th>В пути до клиента</th>
+                                <th>В пути от клиента</th>
+                                <th>FBS</th>
+                                <th>% локал</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var article in Model.Articles)
+                            {
+                                <tr>
+                                    <td>@article.SupplierArticle</td>
+                                    <td class="text-end">@article.TotalOrders</td>
+                                    <td class="text-end">@article.FactOrdersFBW</td>
+                                    <td class="text-end">@article.FactOrdersFBS</td>
+                                    <td class="text-end">@article.FactOrdersDBS_DBW</td>
+                                    <td class="text-end">@article.PlanOrders</td>
+                                    <td class="text-end">@article.FPPercent.ToString("F2")%</td>
+                                    <td class="text-end">@article.OrdersSum.ToString("F2")</td>
+                                    <td class="text-end">@article.FactRedemption</td>
+                                    <td class="text-end">@article.RedemptionSum.ToString("F2")</td>
+                                    <td class="text-end">@article.Giveaways</td>
+                                    <td class="text-end">@article.LossGiveaways.ToString("F2")</td>
+                                    <td class="text-end">@article.Blog</td>
+                                    <td class="text-end">@article.LossBlog.ToString("F2")</td>
+                                    <td class="text-end">@article.SMBK</td>
+                                    <td class="text-end">@article.LossSMBK.ToString("F2")</td>
+                                    <td class="text-end">@article.StockIndex</td>
+                                    <td class="text-end">@article.Turnover.ToString("F2")</td>
+                                    <td class="text-end">@article.Price.ToString("F2")</td>
+                                    <td class="text-end">@article.Discount%</td>
+                                    <td class="text-end">@article.PriceWithoutSPP.ToString("F2")</td>
+                                    <td class="text-end">@article.SPP.ToString("F2")</td>
+                                    <td class="text-end">@article.PriceWithSPP.ToString("F2")</td>
+                                    <td class="text-end">@article.RedemptionPercent.ToString("F2")%</td>
+                                    <td class="text-end">@article.OV_Pcs</td>
+                                    <td class="text-end">@article.OV_Rub.ToString("F2")</td>
+                                    <td class="text-end">@article.DRR_Total.ToString("F2")</td>
+                                    <td class="text-end">@article.DRR_PRK.ToString("F2")</td>
+                                    <td class="text-end">@article.DRR_ARK.ToString("F2")</td>
+                                    <td class="text-end">@article.DRR_ZKZ_Percent.ToString("F2")%</td>
+                                    <td class="text-end">@article.DRR_OV_Percent.ToString("F2")%</td>
+                                    <td class="text-end">@article.DRR_OP_Percent.ToString("F2")%</td>
+                                    <td class="text-end">@article.OP_OV_WithoutDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.OP_OV_WithDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.DRR_PerUnit.ToString("F2")</td>
+                                    <td class="text-end">@article.OP_PerUnit_WithDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.Margin_WithDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.ROI_WithDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.OP_PerUnit_WithoutDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.Margin_WithoutDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.ROI_WithoutDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.TotalImpressions</td>
+                                    <td class="text-end">@article.TotalCTR.ToString("F2")</td>
+                                    <td class="text-end">@article.TotalClicks</td>
+                                    <td class="text-end">@article.TotalCR_Cart.ToString("F2")</td>
+                                    <td class="text-end">@article.TotalCart</td>
+                                    <td class="text-end">@article.TotalFavorites</td>
+                                    <td class="text-end">@article.TotalCR_Order.ToString("F2")</td>
+                                    <td class="text-end">@article.TotalOrders_Ad</td>
+                                    <td class="text-end">@article.OrganicImpressions</td>
+                                    <td class="text-end">@article.OrganicCTR.ToString("F2")</td>
+                                    <td class="text-end">@article.OrganicClicks</td>
+                                    <td class="text-end">@article.OrganicCR_Cart.ToString("F2")</td>
+                                    <td class="text-end">@article.OrganicCart</td>
+                                    <td class="text-end">@article.OrganicCR_Order.ToString("F2")</td>
+                                    <td class="text-end">@article.OrganicOrders</td>
+                                    <td class="text-end">@article.SummaryImpressions</td>
+                                    <td class="text-end">@article.SummaryCTR.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryClicks</td>
+                                    <td class="text-end">@article.SummaryCR_Cart.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryCart</td>
+                                    <td class="text-end">@article.SummaryCR_Order.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryOrders</td>
+                                    <td class="text-end">@article.DRR_Total.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryCPC.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryCPL.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryCPO.ToString("F2")</td>
+                                    <td class="text-end">@article.SummaryCPM.ToString("F2")</td>
+                                    <td class="text-end">@article.ROMI_PK.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkImpressions</td>
+                                    <td class="text-end">@article.PrkCTR.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkClicks</td>
+                                    <td class="text-end">@article.PrkCR_Cart.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkCart</td>
+                                    <td class="text-end">@article.PrkCR_Order.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkOrders</td>
+                                    <td class="text-end">@article.PrkDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkCPC.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkCPL.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkCPO.ToString("F2")</td>
+                                    <td class="text-end">@article.PrkCPM.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkImpressions</td>
+                                    <td class="text-end">@article.ArkCTR.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkClicks</td>
+                                    <td class="text-end">@article.ArkCR_Cart.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkCart</td>
+                                    <td class="text-end">@article.ArkCR_Order.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkOrders</td>
+                                    <td class="text-end">@article.ArkDRR.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkCPC.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkCPL.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkCPO.ToString("F2")</td>
+                                    <td class="text-end">@article.ArkCPM.ToString("F2")</td>
+                                    <td class="text-end">@article.FBW_Total</td>
+                                    <td class="text-end">@article.FBW_Electrostal</td>
+                                    <td class="text-end">@article.FBW_Koledino</td>
+                                    <td class="text-end">@article.FBW_Podolsk</td>
+                                    <td class="text-end">@article.FBW_Kazan</td>
+                                    <td class="text-end">@article.FBW_Tula</td>
+                                    <td class="text-end">@article.FBW_Nevinnomyssk</td>
+                                    <td class="text-end">@article.FBW_Krasnodar</td>
+                                    <td class="text-end">@article.FBW_Other</td>
+                                    <td class="text-end">@article.InTransitToClient</td>
+                                    <td class="text-end">@article.InTransitFromClient</td>
+                                    <td class="text-end">@article.FBS</td>
+                                    <td class="text-end">@article.LocalPercent.ToString("F2")%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            Нет данных для отображения. Нажмите "Загрузить данные" для загрузки артикулов.
+        </div>
+    }
+</div>

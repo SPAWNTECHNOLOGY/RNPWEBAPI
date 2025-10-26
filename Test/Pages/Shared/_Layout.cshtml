@@ -32,12 +32,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Unit">SKU</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Articles">Артикулы</a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="@(ViewData["Title"]?.ToString() == "Артикулы" ? "w-100" : "container")">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
