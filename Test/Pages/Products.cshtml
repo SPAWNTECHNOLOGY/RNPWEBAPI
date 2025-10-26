@@ -1,0 +1,83 @@
+@page
+@model Test.Pages.ProductsModel
+@{
+    ViewData["Title"] = "Товары";
+}
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="dateFrom" class="form-label">Дата начала:</label>
+                    <input type="datetime-local"
+                           class="form-control"
+                           id="dateFrom"
+                           name="dateFrom"
+                           value="@Model.DateFrom.ToString("yyyy-MM-ddTHH:mm")" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <input type="hidden" name="load" value="true" />
+                    <button type="submit" class="btn btn-primary">Загрузить данные</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Products.Any())
+    {
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Список товаров</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Артикул</th>
+                                <th>Товар</th>
+                                <th>Бренд</th>
+                                <th>Кол-во заказов</th>
+                                <th>Выручка</th>
+                                <th>Средняя скидка</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.Products)
+                            {
+                                <tr>
+                                    <td><strong>@p.Article</strong></td>
+                                    <td>@p.Subject</td>
+                                    <td>@p.Brand</td>
+                                    <td>@p.OrdersCount</td>
+                                    <td>@p.TotalRevenue.ToString("N0") ₽</td>
+                                    <td>@p.AvgDiscount.ToString("N1")%</td>
+                                    <td>
+                                        <a class="btn btn-sm btn-outline-primary" asp-page="/Product" asp-route-article="@p.Article" asp-route-dateFrom="@Model.DateFrom.ToString("yyyy-MM-ddTHH:mm:ss")">Открыть</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            Нет данных. Выберите дату и нажмите "Загрузить данные".
+        </div>
+    }
+</div>

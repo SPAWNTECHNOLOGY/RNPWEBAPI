@@ -1,0 +1,118 @@
+@page
+@model Test.Pages.ProductModel
+@{
+    ViewData["Title"] = "Товар";
+}
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">@ViewData["Title"]: @Model.Article</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Артикул</label>
+                    <input name="article" class="form-control" value="@Model.Article" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Дата начала</label>
+                    <input type="datetime-local" name="dateFrom" class="form-control" value="@Model.DateFrom.ToString("yyyy-MM-ddTHH:mm")" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <input type="hidden" name="load" value="true" />
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.Orders.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2">Кол-во заказов</h6>
+                        <h2 class="card-title mb-0">@Model.OrdersCount</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2">Выручка</h6>
+                        <h2 class="card-title mb-0">@Model.TotalRevenue.ToString("N0") ₽</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2">Средняя скидка</h6>
+                        <h2 class="card-title mb-0">@Model.AvgDiscount.ToString("N1")%</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Дата</th>
+                                <th>Склад</th>
+                                <th>Регион</th>
+                                <th>Цена</th>
+                                <th>Скидка</th>
+                                <th>Итого</th>
+                                <th>Размер</th>
+                                <th>Бренд</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model.Orders.OrderByDescending(x => x.Date))
+                            {
+                                <tr>
+                                    <td>@o.Date.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td>@o.WarehouseName</td>
+                                    <td>@o.RegionName</td>
+                                    <td><s>@o.TotalPrice ₽</s></td>
+                                    <td><span class="badge bg-danger">-@o.DiscountPercent%</span></td>
+                                    <td><strong>@o.FinishedPrice ₽</strong></td>
+                                    <td>@o.TechSize</td>
+                                    <td>@o.Brand</td>
+                                    <td>
+                                        @if (o.IsCancel)
+                                        {
+                                            <span class="badge bg-secondary">Отменён</span>
+                                        }
+                                        else if (o.IsRealization)
+                                        {
+                                            <span class="badge bg-success">Реализация</span>
+                                        }
+                                        else if (o.IsSupply)
+                                        {
+                                            <span class="badge bg-info">Поставка</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Нет данных. Укажите артикул и нажмите "Загрузить".</div>
+    }
+</div>

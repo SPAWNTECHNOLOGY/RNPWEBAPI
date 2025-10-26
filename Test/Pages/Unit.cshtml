@@ -1,0 +1,104 @@
+@page
+@model Test.Pages.UnitModel
+@{
+    ViewData["Title"] = "SKU";
+}
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <!-- Фильтр загрузки -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-2 d-flex align-items-end">
+                    <input type="hidden" name="load" value="true" />
+                    <button type="submit" class="btn btn-primary">Загрузить данные</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Статистика -->
+    @if (Model.Units.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Всего единиц товаров</h5>
+                        <p class="card-text fs-3">@Model.Units.Count</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Объединенная горизонтальная таблица -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <!-- Первая строка заголовков -->
+                            <tr>
+                                <th colspan="4" class="text-center" style="background-color: #cfe2ff; border: 1px solid #86b7fe;">SKU</th>
+                                <th colspan="2" class="text-end" style="background-color: #dc3545; color: white; border: 1px solid #86101a; font-weight: bold;">Цены</th>
+                                <th colspan="1" class="text-center" style="background-color: #ffe5cc; border: 1px solid #dee2e6; font-weight: bold;">% выкупа</th>
+                                <th colspan="2" class="text-center" style="background-color: #198754; color: white; border: 1px solid #0a3622; font-weight: bold;">Удержания WB текущие</th>
+                            </tr>
+                            <!-- Вторая строка заголовков -->
+                            <tr>
+                                <!-- SKU -->
+                                <th class="text-center" style="border: 1px solid #dee2e6;">Артикул продавца</th>
+                                <th class="text-center" style="border: 1px solid #dee2e6;">Артикул WB</th>
+                                <th class="text-center" style="border: 1px solid #dee2e6;">Категория продавца</th>
+                                <th class="text-center" style="border: 1px solid #dee2e6;">Бренд</th>
+                                <!-- Цены -->
+                                <th class="text-center" style="border: 1px solid #dee2e6; white-space: nowrap;">Цена до скидки, руб</th>
+                                <th class="text-center" style="border: 1px solid #dee2e6;">Скидка, %</th>
+                                <!-- % выкупа -->
+                                <th class="text-center" style="border: 1px solid #dee2e6;">%</th>
+                                <!-- Удержания -->
+                                <th class="text-center" style="border: 1px solid #dee2e6; white-space: nowrap;">Литраж по отчету остатков</th>
+                                <th class="text-center" style="border: 1px solid #dee2e6; white-space: nowrap;">Литраж по хар-кам</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var unit in Model.Units)
+                            {
+                                <tr>
+                                    <!-- SKU данные -->
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #f8f9fa;"><strong>@unit.SupplierArticle</strong></td>
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #f8f9fa;">@unit.WbArticle</td>
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #f8f9fa;">@unit.SellerCategory</td>
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #f8f9fa;">@unit.Brand</td>
+                                    <!-- Цены данные -->
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #ffe5cc;">@unit.PriceBeforeDiscount.ToString("F2")</td>
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #ffe5cc;">@unit.DiscountPercent</td>
+                                    <!-- % выкупа данные -->
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #fff3cd;">@unit.BuyoutPercent.ToString("F2")</td>
+                                    <!-- Удержания данные -->
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #f0fff4;">@unit.LitrageByStocks.ToString("F2")</td>
+                                    <td class="text-center" style="border: 1px solid #dee2e6; background-color: #f0fff4;">@unit.LitrageByCharacteristics.ToString("F2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Нет данных для отображения. Нажмите "Загрузить данные" для загрузки артикулов.
+        </div>
+    }
+</div>

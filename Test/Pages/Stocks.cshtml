@@ -1,0 +1,202 @@
+@page
+@model Test.Pages.StocksModel
+@{
+    ViewData["Title"] = "Товары на складах";
+}
+
+<div class="container-fluid mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    <!-- Фильтр по дате -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="dateFrom" class="form-label">Дата начала:</label>
+                    <input type="datetime-local" 
+                           class="form-control" 
+                           id="dateFrom" 
+                           name="dateFrom" 
+                           value="@Model.DateFrom.ToString("yyyy-MM-ddTHH:mm")">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <input type="hidden" name="load" value="true" />
+                    <button type="submit" class="btn btn-primary">Загрузить данные</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    <!-- Статистика -->
+    @if (Model.Stocks.Any())
+    {
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Всего позиций</h5>
+                        <p class="card-text fs-3">@Model.Stocks.Count</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success">
+                    <div class="card-body">
+                        <h5 class="card-title">Общее кол-во</h5>
+                        <p class="card-text fs-3">@Model.Stocks.Sum(s => s.Quantity)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info">
+                    <div class="card-body">
+                        <h5 class="card-title">В пути к клиенту</h5>
+                        <p class="card-text fs-3">@Model.Stocks.Sum(s => s.InWayToClient)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning">
+                    <div class="card-body">
+                        <h5 class="card-title">Складов</h5>
+                        <p class="card-text fs-3">@Model.Stocks.Select(s => s.WarehouseName).Distinct().Count()</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Таблица сводной информации по товарам -->
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Сводная информация по товарам</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Артикул</th>
+                                <th>Товар</th>
+                                <th>Размер</th>
+                                <th>Бренд</th>
+                                <th>На складе</th>
+                                <th>В пути к клиенту</th>
+                                <th>Возвращается</th>
+                                <th>Складов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.GroupedStocks)
+                            {
+                                <tr>
+                                    <td><strong>@item.Article</strong></td>
+                                    <td>@item.Subject</td>
+                                    <td>@item.Size</td>
+                                    <td>@item.Brand</td>
+                                    <td>
+                                        <span class="badge bg-success fs-6">@item.TotalQuantity</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@item.InWayToClient</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-warning">@item.InWayFromClient</span>
+                                    </td>
+                                    <td>@item.Warehouses</td>
+                                </tr>
+                                <tr class="table-light">
+                                    <td colspan="8">
+                                        <small class="text-muted"><strong>Склады:</strong> @item.WarehouseList</small>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Детальная информация по складам -->
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Детальная информация по складам</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Обновлено</th>
+                                <th>Артикул</th>
+                                <th>Товар</th>
+                                <th>Размер</th>
+                                <th>Бренд</th>
+                                <th>Склад</th>
+                                <th>Кол-во</th>
+                                <th>К клиенту</th>
+                                <th>От клиента</th>
+                                <th>Всего</th>
+                                <th>Штрихкод</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var stock in Model.Stocks.OrderByDescending(s => s.LastChangeDate))
+                            {
+                                <tr>
+                                    <td><small>@stock.LastChangeDate.ToString("dd.MM.yyyy HH:mm")</small></td>
+                                    <td><small class="fw-bold">@stock.SupplierArticle</small></td>
+                                    <td>
+                                        <div>@stock.Subject</div>
+                                        <small class="text-muted">@stock.Category</small>
+                                    </td>
+                                    <td>@stock.TechSize</td>
+                                    <td>@stock.Brand</td>
+                                    <td><small>@stock.WarehouseName</small></td>
+                                    <td>
+                                        <span class="badge bg-success">@stock.Quantity</span>
+                                    </td>
+                                    <td>
+                                        @if (stock.InWayToClient > 0)
+                                        {
+                                            <span class="badge bg-info">@stock.InWayToClient</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (stock.InWayFromClient > 0)
+                                        {
+                                            <span class="badge bg-warning">@stock.InWayFromClient</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                    <td><strong>@stock.QuantityFull</strong></td>
+                                    <td><small>@stock.Barcode</small></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle"></i> Нет данных для отображения. Выберите дату и нажмите "Загрузить данные".
+        </div>
+    }
+</div>
+
